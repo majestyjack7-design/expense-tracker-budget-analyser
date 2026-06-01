@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="analytics-header">
+    <div>
+        <h1>Analytics</h1>
+        <p>Insights and trends about your income and spending.</p>
+    </div>
+
+    <form method="GET" action="{{ url_for('reports') }}" class="analytics-month-form">
+        <input type="month" name="month" value="{{ selected_month }}">
+        <button type="submit">View</button>
+    </form>
+</section>
+
+<section class="analytics-summary-grid">
+
+    <div class="analytics-summary-card">
+        <div class="analytics-icon income">↗</div>
+
+        <div>
+            <p>Total Income</p>
+            <h2>₦{{ "{:,.2f}".format(total_income|default(0)|float) }}</h2>
+
+            <span class="{% if income_change >= 0 %}positive{% else %}negative{% endif %}">
+                {% if income_change >= 0 %}↑{% else %}↓{% endif %}
+                {{ "%.1f"|format(income_change|abs) }}% vs last month
+            </span>
+        </div>
+    </div>
+
+    <div class="analytics-summary-card">
+        <div class="analytics-icon expense">↘</div>
+
+        <div>
+            <p>Total Expenses</p>
+            <h2>₦{{ "{:,.2f}".format(total_expenses|default(0)|float) }}</h2>
+
+            <span class="{% if expense_change <= 0 %}positive{% else %}negative{% endif %}">
+                {% if expense_change >= 0 %}↑{% else %}↓{% endif %}
+                {{ "%.1f"|format(expense_change|abs) }}% vs last month
+            </span>
+        </div>
+    </div>
+
+    <div class="analytics-summary-card">
+        <div class="analytics-icon savings">▣</div>
+
+        <div>
+            <p>Net Savings</p>
+            <h2>₦{{ "{:,.2f}".format(net_savings|default(0)|float) }}</h2>
+
+            <span class="{% if savings_change >= 0 %}positive{% else %}negative{% endif %}">
+                {% if savings_change >= 0 %}↑{% else %}↓{% endif %}
+                {{ "%.1f"|format(savings_change|abs) }}% vs last month
+            </span>
+        </div>
+    </div>
+
+    <div class="analytics-summary-card">
+        <div class="analytics-icon rate">◔</div>
+
+        <div>
+            <p>Savings Rate</p>
+            <h2>{{ "%.1f"|format(savings_rate) }}%</h2>
+
+            <span class="{% if savings_rate_change >= 0 %}positive{% else %}negative{% endif %}">
+                {% if savings_rate_change >= 0 %}↑{% else %}↓{% endif %}
+                {{ "%.1f"|format(savings_rate_change|abs) }}% vs last month
+            </span>
+        </div>
+    </div>
+
+</section>
+
+<section class="analytics-chart-grid">
+
+    <div class="analytics-chart-card">
+        <div class="analytics-chart-header">
+            <h2>Income vs Expenses Trend</h2>
+            <span>Last 6 Months</span>
+        </div>
+
+        <div class="analytics-chart-legend">
+            <span><i class="income-dot"></i> Income</span>
+            <span><i class="expense-dot"></i> Expenses</span>
+        </div>
+
+        <div class="analytics-chart-box">
+            <canvas id="incomeExpenseChart"></canvas>
+        </div>
+    </div>
+
+    <div class="analytics-chart-card">
+        <div class="analytics-chart-header">
+            <h2>Expenses by Category</h2>
+            <span>This Month</span>
+        </div>
+
+        <div class="category-chart-layout">
+            <div class="category-doughnut-box">
+                <canvas id="categoryChart"></canvas>
+
+            <div class="category-chart-center">
+                  <span>Total</span>
+                  <strong>-₦{{ "{:,.2f}".format(category_total|default(0)|float) }}</strong>
+            </div>
+            </div>
+
+            <!-- <div class="category-list">
+                <div>
+                    <span><i style="background:#f97316;"></i> Food</span>
+                    <strong>₦8,500</strong>
+                </div>
+
+                <div>
+                    <span><i style="background:#3b82f6;"></i> Transport</span>
+                    <strong>₦5,000</strong>
+                </div>
+
+                <div>
+                    <span><i style="background:#a855f7;"></i> Shopping</span>
+                    <strong>₦4,000</strong>
+                </div>
+
+                <div>
+                    <span><i style="background:#facc15;"></i> Bills</span>
+                    <strong>₦3,500</strong>
+                </div>
+
+                <div>
+                    <span><i style="background:#22c55e;"></i> Other</span>
+                    <strong>₦4,000</strong>
+                </div>
+            </div> -->
+            <div class="category-list">
+                {% if category_items %}
+                {% for item in category_items %}
+            <div>
+                <span>
+                   <i class="category-dot dot-{{ loop.index0 }}"></i>
+                    {{ item.name }}
+                </span>
+
+                <strong>
+                    -₦{{ "{:,.2f}".format(item.amount|default(0)|float) }}({{ "%.0f"|format(item.percentage) }}%)
+                </strong>
+            </div>
+               {% endfor %}
+               {% else %}
+            <div>
+            <span>
+                <i style="background:#f97316;"></i>
+                No expenses yet
+            </span>
+
+            <strong>₦0.00</strong>
+            </div>
+            {% endif %}
+           </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="analytics-overview-grid">
+
+    <div class="analytics-overview-card">
+        <div class="analytics-overview-header">
+            <h2>Spending Overview</h2>
+            <span>This Month</span>
+        </div>
+
+        <div class="overview-stats-grid">
+            <div>
+                <p>Average Spending Month</p>
+                <h3>₦{{ "{:,.2f}".format(average_monthly_expense|default(0)|float) }}</h3>
+            </div>
+
+            <div>
+                <p>Highest Spending Month</p>
+                <h3>{{ highest_month_label }}</h3>
+                <span>₦{{ "{:,.2f}".format(highest_expense|default(0)|float) }}</span>
+            </div>
+
+            <div>
+                <p>Lowest Spending Month</p>
+              <h3>{{ lowest_month_label }}</h3>
+              <span>₦{{ "{:,.2f}".format(lowest_expense|default(0)|float) }}</span>
+            </div>
+        </div>
+
+        <div class="analytics-insight-box">
+            <div class="insight-icon">💡</div>
+
+            <div>
+                <h3>Insight</h3>
+              <p>
+                 {{ insight_text }}
+              </p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="top-categories-card">
+
+    <div class="top-categories-header">
+        <h2>Top Spending Categories</h2>
+        <span>This Month</span>
+    </div>
+
+    <div class="top-category-table-head">
+        <span>Category</span>
+        <span>Amount</span>
+        <span>% of Total</span>
+    </div>
+
+    <div class="top-category-list">
+
+        {% if category_items %}
+            {% for item in category_items %}
+                <div class="top-category-row">
+                    <div class="top-category-name">
+                        <span class="rank-badge rank-{{ loop.index0 }}">
+                            {{ loop.index }}
+                        </span>
+
+                        {{ item.name }}
+                    </div>
+
+                    <div class="top-category-progress">
+                        <div style="width: {{ item.percentage }}%;"></div>
+                    </div>
+
+                    <strong>₦{{ "{:,.2f}".format(item.amount|default(0)|float) }}</strong>
+                    <strong>{{ "%.0f"|format(item.percentage) }}%</strong>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="top-category-empty">
+                No spending categories yet. Add expenses to see your top categories.
+            </div>
+        {% endif %}
+
+    </div>
+
+</section>
+
+<script id="trend-labels-data" type="application/json">
+    {{ trend_labels|tojson }}
+</script>
+
+<script id="trend-income-data" type="application/json">
+    {{ trend_income|tojson }}
+</script>
+
+<script id="trend-expenses-data" type="application/json">
+    {{ trend_expenses|tojson }}
+</script>
+
+<script id="category-labels-data" type="application/json">
+    {{ category_labels|tojson }}
+</script>
+
+<script id="category-values-data" type="application/json">
+    {{ category_values|tojson }}
+</script>
+
+<script id="category-colors-data" type="application/json">
+    {{ category_colors|tojson }}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const trendLabels = JSON.parse(document.getElementById("trend-labels-data").textContent);
+    const trendIncome = JSON.parse(document.getElementById("trend-income-data").textContent);
+    const trendExpenses = JSON.parse(document.getElementById("trend-expenses-data").textContent);
+
+    const incomeExpenseChart = document.getElementById("incomeExpenseChart");
+
+    new Chart(incomeExpenseChart, {
+        type: "line",
+        data: {
+            labels: trendLabels,
+            datasets: [
+                {
+                    label: "Income",
+                    data: trendIncome,
+                    borderColor: "#22c55e",
+                    backgroundColor: "rgba(34, 197, 94, 0.10)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#ffffff",
+                    pointBorderColor: "#22c55e",
+                    pointBorderWidth: 3
+                },
+                {
+                    label: "Expenses",
+                    data: trendExpenses,
+                    borderColor: "#f97316",
+                    backgroundColor: "rgba(249, 115, 22, 0.08)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#ffffff",
+                    pointBorderColor: "#f97316",
+                    pointBorderWidth: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            return "₦" + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+const categoryLabels = JSON.parse(document.getElementById("category-labels-data").textContent);
+const categoryValues = JSON.parse(document.getElementById("category-values-data").textContent);
+const categoryColors = JSON.parse(document.getElementById("category-colors-data").textContent);
+
+const categoryChart = document.getElementById("categoryChart");
+
+new Chart(categoryChart, {
+    type: "doughnut",
+    data: {
+        labels: categoryLabels,
+        datasets: [
+            {
+                data: categoryValues,
+                backgroundColor: categoryColors,
+                borderWidth: 0
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

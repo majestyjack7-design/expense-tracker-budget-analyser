@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll(".alert");
+
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                alert.classList.add("hide-alert");
+
+                setTimeout(function () {
+                    alert.remove();
+                }, 400);
+            }, 2500);
+        });
+    });
+</script>
+<body>
+
+{% if request.endpoint in ["login", "register"] %}
+
+    {% block auth_content %}{% endblock %}
+
+{% else %}
+
+    {% if current_user.is_authenticated %}
+
+        <div class="app-shell">
+
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon">▣</div>
+
+                    <div>
+                        <h2>Expense Tracker</h2>
+                        <p>& Budget Analyser</p>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+
+                    <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <span>⌂</span>
+                        Dashboard
+                    </a>
+
+                    <a href="{{ url_for('transactions') }}" class="{% if request.endpoint == 'transactions' or request.endpoint == 'edit_transaction' %}active{% endif %}">
+                        <span>⇄</span>
+                        Transactions
+                    </a>
+
+                    <a href="{{ url_for('add_transaction') }}" class="{% if request.endpoint == 'add_transaction' %}active{% endif %}">
+                        <span>＋</span>
+                        Add Transaction
+                    </a>
+
+                    <a href="{{ url_for('budget') }}" class="{% if request.endpoint == 'budget' %}active{% endif %}">
+                        <span>◎</span>
+                        Budget
+                    </a>
+
+                    <a href="{{ url_for('reports') }}" class="{% if request.endpoint == 'reports' %}active{% endif %}">
+                        <span>▥</span>
+                        Analytics
+                    </a>
+
+                    <a href="{{ url_for('export_csv') }}">
+                        <span>⇩</span>
+                        Export CSV
+                    </a>
+
+                    <a href="{{ url_for('logout') }}">
+                        <span>↪</span>
+                        Logout
+                    </a>
+
+                </nav>
+            </aside>
+
+            <main class="main-content">
+
+                <header class="top-navbar">
+                    <button class="menu-toggle" type="button">☰</button>
+
+                    <div class="top-navbar-right">
+                        <button class="notification-btn" type="button">♧</button>
+
+                        <div class="user-profile">
+                            <div class="user-avatar">
+                                {{ current_user.name[0]|upper if current_user.name else "U" }}
+                            </div>
+
+                            <div class="user-profile-text">
+                                <strong>{{ current_user.name if current_user.name else "User" }}</strong>
+                                <span>{{ current_user.email }}</span>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </header>
+
+                <section class="page-content">
+
+    {% else %}
+
+        <nav class="public-nav landing-nav">
+
+            <div class="landing-logo">
+                <span class="landing-logo-icon">▥</span>
+
+                <strong>
+                    Expense<span>Tracker</span>
+                </strong>
+            </div>
+
+            <div class="landing-nav-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+
+                <a href="{{ url_for('login') }}" class="landing-login-btn">
+                    Login
+                </a>
+
+                <a href="{{ url_for('register') }}" class="landing-register-btn">
+                    Register
+                </a>
+            </div>
+
+        </nav>
+
+        <main class="{% if request.endpoint == 'index' %}landing-main{% else %}container{% endif %}">
+
+    {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+    {% if current_user.is_authenticated %}
+                </section>
+            </main>
+        </div>
+    {% else %}
+        </main>
+    {% endif %}
+
+{% endif %}
+<script>
+    function formatMoneyInput(value) {
+        value = value.replace(/,/g, "");
+
+        if (value === "") {
+            return "";
+        }
+
+        let parts = value.split(".");
+        let wholeNumber = parts[0];
+        let decimalPart = parts[1];
+
+        wholeNumber = wholeNumber.replace(/\D/g, "");
+
+        if (wholeNumber === "") {
+            return "";
+        }
+
+        wholeNumber = Number(wholeNumber).toLocaleString("en-US");
+
+        if (decimalPart !== undefined) {
+            decimalPart = decimalPart.replace(/\D/g, "").slice(0, 2);
+            return wholeNumber + "." + decimalPart;
+        }
+
+        return wholeNumber;
+    }
+
+    document.addEventListener("input", function (event) {
+        if (!event.target.classList.contains("money-input")) {
+            return;
+        }
+
+        event.target.value = formatMoneyInput(event.target.value);
+    });
+
+    document.addEventListener("submit", function (event) {
+        const moneyInputs = event.target.querySelectorAll(".money-input");
+
+        moneyInputs.forEach(function (input) {
+            input.value = input.value.replace(/,/g, "");
+        });
+    });
+</script>
+</body>
+</html>

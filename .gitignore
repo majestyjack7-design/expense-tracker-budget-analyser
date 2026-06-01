@@ -1,0 +1,21 @@
+# Python environment
+venv/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Local database
+database.db
+*.sqlite3
+
+# Mac system files
+.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Flask
+instance/

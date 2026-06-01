@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if budget_amount is defined %}
+    {% set budget_value = budget_amount %}
+{% elif current_budget is defined and current_budget %}
+    {% set budget_value = current_budget.amount %}
+{% else %}
+    {% set budget_value = 0 %}
+{% endif %}
+
+{% if monthly_expense is defined %}
+    {% set spent_value = monthly_expense %}
+{% elif total_expenses is defined %}
+    {% set spent_value = total_expenses %}
+{% elif total_expense is defined %}
+    {% set spent_value = total_expense %}
+{% elif spent is defined %}
+    {% set spent_value = spent %}
+{% else %}
+    {% set spent_value = 0 %}
+{% endif %}
+
+{% if remaining_budget is defined %}
+    {% set remaining_value = remaining_budget %}
+{% elif remaining is defined %}
+    {% set remaining_value = remaining %}
+{% else %}
+    {% set remaining_value = budget_value - spent_value %}
+{% endif %}
+
+{% if percentage_used is defined %}
+    {% set used_value = percentage_used %}
+{% elif budget_value > 0 %}
+    {% set used_value = (spent_value / budget_value) * 100 %}
+{% else %}
+    {% set used_value = 0 %}
+{% endif %}
+
+{% if used_value > 100 %}
+    {% set progress_width = 100 %}
+{% else %}
+    {% set progress_width = used_value %}
+{% endif %}
+
+<section class="budget-page-header">
+    <div>
+        <h1>Monthly Budget</h1>
+        <p>Set a spending budget for the current month and track your progress.</p>
+    </div>
+
+    <span class="budget-month-pill">This Month</span>
+</section>
+
+<section class="set-budget-card">
+    <div class="set-budget-text">
+        <h2>Set Monthly Budget</h2>
+        <p>Enter your total budget amount for this month.</p>
+    </div>
+
+    <form method="POST" class="budget-form">
+        <div class="budget-input-wrap">
+            <span>₦</span>
+
+            <input
+            type="text"
+            name="amount"
+            class="money-input"
+            inputmode="decimal"
+            value="{{ "{:,.2f}".format(budget_value) }}"
+            placeholder="Enter budget amount"
+            required
+            >
+        </div>
+
+        <button type="submit">
+            Save Budget
+        </button>
+    </form>
+</section>
+
+<section class="budget-summary-card">
+
+    <div class="budget-summary-title">
+        <div>
+            <h2>Budget Summary</h2>
+            <p>Your budget performance for this month.</p>
+        </div>
+
+        {% if budget_value <= 0 %}
+            <span class="budget-status neutral">Not Set</span>
+        {% elif used_value <= 80 %}
+            <span class="budget-status good">Healthy</span>
+        {% elif used_value <= 100 %}
+            <span class="budget-status warning">Careful</span>
+        {% else %}
+            <span class="budget-status danger">Over Budget</span>
+        {% endif %}
+    </div>
+
+    <div class="budget-stat-grid">
+
+        <div class="budget-stat-box">
+            <div class="budget-stat-icon orange">▣</div>
+
+            <div>
+                <p>Budget</p>
+                <h3>₦{{ "{:,.2f}".format(budget_value|default(0)) }}</h3>
+            </div>
+        </div>
+
+        <div class="budget-stat-box">
+            <div class="budget-stat-icon orange">↓</div>
+
+            <div>
+                <p>Spent</p>
+                <h3>-₦{{ "{:,.2f}".format(spent_value|default(0)) }}</h3>
+            </div>
+        </div>
+
+        <div class="budget-stat-box">
+            <div class="budget-stat-icon orange">↑</div>
+
+            <div>
+                <p>Remaining</p>
+                <h3>₦{{ "{:,.2f}".format(remaining_value|default(0)) }}</h3>
+            </div>
+        </div>
+
+        <div class="budget-stat-box">
+            <div class="budget-stat-icon orange">◔</div>
+
+            <div>
+                <p>Used</p>
+                <h3>{{ "%.1f"|format(used_value) }}%</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="budget-progress-area">
+        <div class="budget-progress-bar">
+            <div style="width: {{ progress_width }}%;"></div>
+        </div>
+
+        <p>{{ "%.1f"|format(used_value) }}% of your budget used</p>
+    </div>
+
+    {% if budget_value <= 0 %}
+        <div class="budget-message neutral">
+            Set a monthly budget to start tracking your spending progress.
+        </div>
+    {% elif used_value <= 80 %}
+        <div class="budget-message good">
+            You are within your budget. Keep it up!
+        </div>
+    {% elif used_value <= 100 %}
+        <div class="budget-message warning">
+            You are getting close to your budget limit. Try to reduce spending.
+        </div>
+    {% else %}
+        <div class="budget-message danger">
+            You have exceeded your budget. Review your expenses and adjust your spending.
+        </div>
+    {% endif %}
+
+</section>
+
+<section class="budget-tip-card">
+    <div class="budget-tip-icon">💡</div>
+
+    <div>
+        <h3>Budget Tip</h3>
+        <p>
+            Try to keep your spending below 80% of your monthly budget so you have room for emergencies and savings.
+        </p>
+    </div>
+</section>
+
+{% endblock %}

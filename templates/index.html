@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="landing-hero">
+
+    <div class="landing-hero-text">
+
+        <div class="landing-badge">
+            ✦ Take Control of Your Finances
+        </div>
+
+        <h1>
+            Welcome to <br>
+            <span>Expense Tracker</span>
+        </h1>
+
+        <p>
+            Track your income, expenses, budgets, and spending habits in one place.
+            Make smarter financial decisions and stay in control of your money.
+        </p>
+
+        <div class="landing-actions">
+            <a href="{{ url_for('register') }}" class="landing-primary-btn">
+                Create Account
+            </a>
+
+            <a href="{{ url_for('login') }}" class="landing-secondary-btn">
+                Login to Account →
+            </a>
+        </div>
+
+        <div class="landing-security-note">
+            <span>✓</span>
+            Your data is secure and private.
+        </div>
+
+    </div>
+
+    <div class="landing-preview-card">
+
+        <div class="preview-sidebar">
+            <h3>Expense<span>Tracker</span></h3>
+
+            <div class="preview-menu">⌂ Dashboard</div>
+            <div class="preview-menu">⇄ Transactions</div>
+            <div class="preview-menu">＋ Add Transaction</div>
+            <div class="preview-menu">◎ Budget</div>
+            <div class="preview-menu active">▥ Analytics</div>
+        </div>
+
+        <div class="preview-main">
+
+            <div class="preview-header">
+                <h3>Dashboard</h3>
+                <span>This Month</span>
+            </div>
+
+            <div class="preview-card-grid">
+
+                <div class="preview-stat">
+                    <p>Total Income</p>
+                    <h4>₦955,000.00</h4>
+                    <small class="green">↑ 12.5%</small>
+                </div>
+
+                <div class="preview-stat">
+                    <p>Total Expenses</p>
+                    <h4 class="orange">₦610,000.00</h4>
+                    <small class="orange">↑ 8.3%</small>
+                </div>
+
+                <div class="preview-stat">
+                    <p>Net Savings</p>
+                    <h4>₦345,000.00</h4>
+                    <small class="green">↑ 20.1%</small>
+                </div>
+
+            </div>
+
+            <div class="preview-bottom-grid">
+
+                <div class="preview-chart-card">
+                    <h4>Expenses by Category</h4>
+
+                    <div class="preview-donut">
+                        <span>₦610k</span>
+                    </div>
+
+                    <div class="preview-legend">
+                        <p>
+                            <span><i></i> Food</span>
+                            <strong>₦510,000</strong>
+                        </p>
+
+                        <p>
+                            <span><i class="blue"></i> Other</span>
+                            <strong>₦100,000</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="preview-transactions">
+                    <h4>Recent Transactions</h4>
+
+                    <div>
+                        <span>Salary</span>
+                        <strong class="green">+₦500,000</strong>
+                    </div>
+
+                    <div>
+                        <span>Rent</span>
+                        <strong class="orange">-₦100,000</strong>
+                    </div>
+
+                    <div>
+                        <span>Food</span>
+                        <strong class="orange">-₦50,000</strong>
+                    </div>
+
+                    <a href="{{ url_for('register') }}">
+                        View all transactions →
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="landing-features" id="features">
+
+    <div class="landing-feature">
+        <div class="landing-feature-icon">▥</div>
+
+        <h3>Track Income & Expenses</h3>
+
+        <p>
+            Record your income and spending in one place and understand where your money goes.
+        </p>
+    </div>
+
+    <div class="landing-feature">
+        <div class="landing-feature-icon">◎</div>
+
+        <h3>Manage Monthly Budget</h3>
+
+        <p>
+            Set a monthly budget and monitor how much you have spent and what is remaining.
+        </p>
+    </div>
+
+    <div class="landing-feature">
+        <div class="landing-feature-icon">◔</div>
+
+        <h3>View Smart Analytics</h3>
+
+        <p>
+            See spending breakdowns, savings rate, category charts, and monthly trends.
+        </p>
+    </div>
+
+    <div class="landing-feature">
+        <div class="landing-feature-icon">⇩</div>
+
+        <h3>Export Your Records</h3>
+
+        <p>
+            Download your transaction history as a CSV file for Excel or record keeping.
+        </p>
+    </div>
+
+</section>
+
+<section class="landing-about" id="about">
+
+    <div class="landing-about-text">
+        <span class="about-small-title">About the Project</span>
+
+        <h2>
+            A simple way to understand and manage your money.
+        </h2>
+
+        <p>
+            Expense Tracker is a web-based personal finance application designed to help users record income,
+            track expenses, set monthly budgets, and analyse spending habits through clear visual reports.
+        </p>
+
+        <p>
+            The goal of this project is to make money management easier for everyday users by replacing manual
+            tracking with a simple, secure, and user-friendly digital system.
+        </p>
+    </div>
+
+    <div class="landing-about-card">
+
+        <div class="about-card-row">
+            <span>01</span>
+            <div>
+                <h3>Track daily transactions</h3>
+                <p>Users can record income and expenses with category, date, and description.</p>
+            </div>
+        </div>
+
+        <div class="about-card-row">
+            <span>02</span>
+            <div>
+                <h3>Analyse spending patterns</h3>
+                <p>The analytics page helps users understand where their money goes each month.</p>
+            </div>
+        </div>
+
+        <div class="about-card-row">
+            <span>03</span>
+            <div>
+                <h3>Improve budgeting habits</h3>
+                <p>Users can set a monthly budget and monitor how much has been spent or remaining.</p>
+            </div>
+        </div>
+        
+
+          <div class="about-card-row">
+            <span>04</span>
+            <div>
+                <h3>Export Your Records</h3>
+                <p>Users can download their transaction history as a CSV file for Excel or record keeping.</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<footer class="landing-footer">
+    © 2026 Expense Tracker. Built for simple and smarter money management.
+</footer>
+
+{% endblock %}

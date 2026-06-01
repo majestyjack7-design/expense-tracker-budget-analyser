@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block auth_content %}
+<div class="auth-page">
+
+    <div class="auth-form-side">
+        <div class="auth-brand">Expense<span>Tracker</span></div>
+
+        <div class="auth-card">
+            <h2>Create account</h2>
+
+            <p class="auth-subtitle">
+                Already have an account?
+                <a href="{{ url_for('login') }}">Sign in</a>
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="example@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Create a password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Create account</button>
+            </form>
+
+            <div class="auth-divider">OR</div>
+
+            <button class="social-btn" type="button">Continue with Google</button>
+            <button class="social-btn" type="button">Continue with Facebook</button>
+        </div>
+    </div>
+
+    <div class="auth-visual-side">
+        <div class="auth-support">Support</div>
+
+        <div class="visual-content">
+            <div class="feature-card">
+                <h3>Start managing money with confidence</h3>
+
+                <p>
+                    Add your income, record expenses, set budgets, and view clear reports from one simple dashboard.
+                </p>
+
+                <a href="#" class="learn-btn">Get started</a>
+
+                <img src="{{ url_for('static', filename='images/login-hero.png') }}" alt="Budget tracking">
+
+                <div class="earning-card">
+                    <small>Budget Saved</small>
+                    <strong>80%</strong>
+                </div>
+            </div>
+
+            <div class="auth-feature-text">
+                <h2>Built for everyday spending</h2>
+                <p>
+                    A clean and simple tracker for people who want to understand their money better every month.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

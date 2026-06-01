@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="records-header">
+    <div>
+        <h1>My Transactions</h1>
+        <p>View, filter, edit, and manage your income and expenses.</p>
+    </div>
+
+    <div class="records-header-actions">
+        <a href="{{ url_for('add_transaction') }}" class="records-primary-btn">
+            <span>＋</span>
+            Add Transaction
+        </a>
+
+        <a href="{{ url_for('export_csv') }}" class="records-outline-btn">
+            <span>⇧</span>
+            Export CSV
+        </a>
+    </div>
+</section>
+
+<section class="records-filter-card">
+    <form method="GET" action="{{ url_for('transactions') }}" class="records-filter-form">
+
+        <div class="records-filter-field">
+            <label>Transaction Type</label>
+            <select name="type">
+                <option value="all" {% if selected_type == "all" %}selected{% endif %}>All Transactions</option>
+                <option value="income" {% if selected_type == "income" %}selected{% endif %}>Income Only</option>
+                <option value="expense" {% if selected_type == "expense" %}selected{% endif %}>Expenses Only</option>
+            </select>
+        </div>
+
+        <div class="records-filter-field">
+            <label>Month</label>
+            <input type="month" name="month" value="{{ selected_month }}">
+        </div>
+
+        <div class="records-filter-actions">
+            <button type="submit" class="records-filter-btn">
+                ⌁ Apply Filter
+            </button>
+
+            <a href="{{ url_for('transactions') }}" class="records-clear-btn">
+                ↻ Clear
+            </a>
+        </div>
+
+    </form>
+</section>
+
+<section class="records-table-card">
+
+    <div class="records-table-title">
+        <h2>Transaction History</h2>
+
+        {% if transactions %}
+            <p>Showing {{ transactions|length }} transaction{% if transactions|length != 1 %}s{% endif %}</p>
+        {% else %}
+            <p>No transactions found</p>
+        {% endif %}
+    </div>
+
+    {% if transactions %}
+        <div class="records-table-wrapper">
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.transaction_date }}</td>
+
+                            <td>
+                                {% if transaction.description %}
+                                    {{ transaction.description }}
+                                {% else %}
+                                    <span class="records-muted">No description</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <span class="records-category-pill">
+                                    {{ transaction.category }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if transaction.type == "income" %}
+                                    <span class="records-type-pill income">Income</span>
+                                {% else %}
+                                    <span class="records-type-pill expense">Expense</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if transaction.type == "income" %}
+                                    <span class="records-amount income">
+                                       +₦{{ "{:,.2f}".format(transaction.amount|default(0)) }}
+                                    </span>
+                                {% else %}
+                                    <span class="records-amount expense">
+                                        -₦{{ "{:,.2f}".format(transaction.amount|default(0)) }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="records-actions">
+                                    <a href="{{ url_for('edit_transaction', transaction_id=transaction.id) }}" class="records-edit-btn">
+                                        ✎ Edit
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{{ url_for('delete_transaction', transaction_id=transaction.id) }}"
+                                          onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+
+                                        <button type="submit" class="records-delete-btn">
+                                            🗑 Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="records-empty-state">
+            <div class="records-empty-icon">🧾</div>
+            <h3>No transactions found</h3>
+            <p>Add your first income or expense, or clear your filters to see more records.</p>
+
+            <a href="{{ url_for('add_transaction') }}">
+                Add Transaction
+            </a>
+        </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

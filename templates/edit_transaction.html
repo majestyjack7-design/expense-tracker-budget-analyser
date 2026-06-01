@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Edit Transaction</h2>
+
+    <form method="POST">
+        <label>Type</label>
+        <select name="type" required>
+            <option value="income" {% if transaction.type == "income" %}selected{% endif %}>Income</option>
+            <option value="expense" {% if transaction.type == "expense" %}selected{% endif %}>Expense</option>
+        </select>
+
+        <label>Amount</label>
+        <input type="number" name="amount" step="0.01" value="{{ transaction.amount }}" required>
+
+        <label>Category</label>
+        <select name="category" required>
+            <option value="Salary" {% if transaction.category == "Salary" %}selected{% endif %}>Salary</option>
+            <option value="Freelance" {% if transaction.category == "Freelance" %}selected{% endif %}>Freelance</option>
+            <option value="Food" {% if transaction.category == "Food" %}selected{% endif %}>Food</option>
+            <option value="Transport" {% if transaction.category == "Transport" %}selected{% endif %}>Transport</option>
+            <option value="Rent" {% if transaction.category == "Rent" %}selected{% endif %}>Rent</option>
+            <option value="Bills" {% if transaction.category == "Bills" %}selected{% endif %}>Bills</option>
+            <option value="Shopping" {% if transaction.category == "Shopping" %}selected{% endif %}>Shopping</option>
+            <option value="Savings" {% if transaction.category == "Savings" %}selected{% endif %}>Savings</option>
+            <option value="Other" {% if transaction.category == "Other" %}selected{% endif %}>Other</option>
+        </select>
+
+        <label>Description</label>
+        <input type="text" name="description" value="{{ transaction.description }}">
+
+        <label>Date</label>
+        <input type="date" name="transaction_date" value="{{ transaction.transaction_date }}" required>
+
+        <button type="submit">Update Transaction</button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('transactions') }}">Back to Transactions</a>
+    </p>
+{% endblock %}

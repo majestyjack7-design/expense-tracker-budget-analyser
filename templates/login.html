@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block auth_content %}
+<div class="auth-page">
+
+    <div class="auth-form-side">
+        <div class="auth-brand">Expense<span>Tracker</span></div>
+
+        <div class="auth-card">
+            <h2>Sign in</h2>
+
+            <p class="auth-subtitle">
+                Don’t have an account?
+                <a href="{{ url_for('register') }}">Create now</a>
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="example@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-row-small">
+                    <label class="checkbox-row">
+                        <input type="checkbox">
+                        Remember me
+                    </label>
+
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">Sign in</button>
+            </form>
+
+            <div class="auth-divider">OR</div>
+
+            <button class="social-btn" type="button">Continue with Google</button>
+            <button class="social-btn" type="button">Continue with Facebook</button>
+        </div>
+    </div>
+
+    <div class="auth-visual-side">
+        <div class="auth-support">Support</div>
+
+        <div class="visual-content">
+            <div class="feature-card">
+                <h3>Reach financial goals faster</h3>
+
+                <p>
+                    Track your income, control your expenses, and understand where your money goes every month.
+                </p>
+
+                <a href="#" class="learn-btn">Learn more</a>
+
+                <img src="{{ url_for('static', filename='images/login-hero.png') }}" alt="Financial goals">
+
+                <div class="earning-card">
+                    <small>Monthly Balance</small>
+                    <strong>+350.40</strong>
+                </div>
+            </div>
+
+            <div class="auth-feature-text">
+                <h2>Introducing smarter budgeting</h2>
+                <p>
+                    Analyse spending trends, monitor your budget, and make better money decisions with simple visual reports.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

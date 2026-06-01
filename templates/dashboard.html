@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="dashboard-header">
+    <div>
+        <h1>Welcome back, {{ current_user.name }} 👋</h1>
+        <p>Here’s what’s happening with your money this month.</p>
+    </div>
+
+    <a href="{{ url_for('add_transaction') }}" class="dashboard-action-btn">
+        + Add Transaction
+    </a>
+</section>
+
+<section class="summary-grid">
+
+    <div class="summary-card">
+        <div class="summary-top">
+            <div class="summary-icon">↗</div>
+            <span class="summary-change positive">This month</span>
+        </div>
+
+        <p>Total Income</p>
+        <h2>+₦{{ "{:,.2f}".format(monthly_income|default(0)) }}</h2>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-top">
+            <div class="summary-icon">↘</div>
+            <span class="summary-change negative">Spending</span>
+        </div>
+
+        <p>Total Expenses</p>
+        <h2>-₦{{ "{:,.2f}".format(monthly_expense|default(0)) }}</h2>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-top">
+            <div class="summary-icon">◎</div>
+            {% if balance >= 0 %}
+                <span class="summary-change positive">Healthy</span>
+            {% else %}
+                <span class="summary-change negative">Overspent</span>
+            {% endif %}
+        </div>
+
+        <p>Current Balance</p>
+        <h2>+₦{{ "{:,.2f}".format(balance|default(0)) }}</h2>
+    </div>
+
+</section>
+
+<section class="dashboard-table-section">
+    <div class="section-title-row">
+        <h2>Recent Transactions</h2>
+        <a href="{{ url_for('transactions') }}">View all</a>
+    </div>
+
+    {% if recent_transactions %}
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for transaction in recent_transactions %}
+                        <tr>
+                            <td>{{ transaction.transaction_date }}</td>
+
+                            <td>
+                                {% if transaction.description %}
+                                    {{ transaction.description }}
+                                {% else %}
+                                    No description
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <span class="category-pill">
+                                    {{ transaction.category }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if transaction.type == "income" %}
+                                    <span class="type-pill income">Income</span>
+                                {% else %}
+                                    <span class="type-pill expense">Expense</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="{% if transaction.type == 'income' %}amount-income{% else %}amount-expense{% endif %}">
+                            {% if transaction.type == "income" %}
+                                  +₦{{ "{:,.2f}".format(transaction.amount) }}
+                            {% else %}
+                                -₦{{ "{:,.2f}".format(transaction.amount) }}
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No transactions yet</h3>
+            <p>Add your first income or expense to start seeing your dashboard summary.</p>
+            <a href="{{ url_for('add_transaction') }}">Add Transaction</a>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}
