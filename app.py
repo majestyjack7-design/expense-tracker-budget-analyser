@@ -15,7 +15,7 @@ def clean_money_input(value):
     return float(value.replace(",", "").strip())
 
 # Basic app settings
-app.config["SECRET_KEY"] = "change-this-secret-key-later"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-secret-key-later")
 
 # SQLite database setup
 basedir = os.path.abspath(os.path.dirname(__file__))
