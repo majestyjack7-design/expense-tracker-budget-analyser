@@ -3086,15 +3086,25 @@ button {
 /* Mobile */
 
 @media (max-width: 560px) {
+
     .sidebar {
-        display: none !important;
+        display: block !important;
+        position: fixed !important;
+        left: -280px !important;
+        top: 0 !important;
+        width: 260px !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        transition: left 0.3s ease !important;
     }
 
+    .sidebar.show {
+        left: 0 !important;
+    }
 
     .top-navbar {
         padding: 0 18px !important;
     }
-
 
     .page-content {
         padding: 18px !important;

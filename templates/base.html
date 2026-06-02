@@ -36,7 +36,7 @@
 
         <div class="app-shell">
 
-            <aside class="sidebar">
+         <aside id="sidebar" class="sidebar">
                 <div class="sidebar-brand">
                     <div class="sidebar-brand-icon">▣</div>
 
@@ -89,7 +89,7 @@
             <main class="main-content">
 
                 <header class="top-navbar">
-                    <button class="menu-toggle" type="button">☰</button>
+                    <button id="menu-toggle" class="menu-toggle" type="button">☰</button>
 
                     <div class="top-navbar-right">
                         <button class="notification-btn" type="button">♧</button>
@@ -206,6 +206,19 @@
             input.value = input.value.replace(/,/g, "");
         });
     });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const menuToggle = document.getElementById("menu-toggle");
+    const sidebar = document.getElementById("sidebar");
+
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("show");
+        });
+    }
+});
 </script>
 </body>
 </html>
